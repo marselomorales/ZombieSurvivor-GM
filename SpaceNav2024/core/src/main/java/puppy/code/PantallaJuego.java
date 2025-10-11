@@ -31,6 +31,8 @@ public class PantallaJuego implements Screen {
 	private  ArrayList<Ball2> balls2 = new ArrayList<>();
 	private  ArrayList<Bullet> balas = new ArrayList<>();
 
+	// NEW: Referencia al jugador para que los enemigos lo persigan
+	private Nave4 jugador;
 
 	public PantallaJuego(SpaceNavigation game, int ronda, int vidas, int score,  
 			int velXAsteroides, int velYAsteroides, int cantAsteroides) {
@@ -44,47 +46,55 @@ public class PantallaJuego implements Screen {
 		batch = game.getBatch();
 		camera = new OrthographicCamera();	
 		camera.setToOrtho(false, 800, 640);
-		//inicializar assets; musica de fondo y efectos de sonido
-		explosionSound = Gdx.audio.newSound(Gdx.files.internal("explosion.ogg"));
+		
+		// MOD: Cambiar sonidos y música por temática zombi
+		explosionSound = Gdx.audio.newSound(Gdx.files.internal("zombie-death.ogg"));
 		explosionSound.setVolume(1,0.5f);
-		gameMusic = Gdx.audio.newMusic(Gdx.files.internal("piano-loops.wav")); //
+		gameMusic = Gdx.audio.newMusic(Gdx.files.internal("survival-theme.wav"));
 		
 		gameMusic.setLooping(true);
 		gameMusic.setVolume(0.5f);
 		gameMusic.play();
 		
-	    // cargar imagen de la nave, 64x64   
-	    nave = new Nave4(Gdx.graphics.getWidth()/2-50,30,new Texture(Gdx.files.internal("MainShip3.png")),
-	    				Gdx.audio.newSound(Gdx.files.internal("hurt.ogg")), 
-	    				new Texture(Gdx.files.internal("Rocket2.png")), 
-	    				Gdx.audio.newSound(Gdx.files.internal("pop-sound.mp3"))); 
+	    // MOD: Cambiar textura de nave por superviviente
+	    nave = new Nave4(Gdx.graphics.getWidth()/2-50,30,
+	    				new Texture(Gdx.files.internal("survivor.png")), // NEW: Textura de superviviente
+	    				Gdx.audio.newSound(Gdx.files.internal("player-hurt.ogg")), // NEW: Sonido de daño
+	    				new Texture(Gdx.files.internal("bullet.png")), // NEW: Textura de bala
+	    				Gdx.audio.newSound(Gdx.files.internal("gun-shot.ogg"))); // NEW: Sonido de disparo
+	    
+	    this.jugador = nave; // NEW: Guardar referencia para los enemigos
         nave.setVidas(vidas);
-        //crear asteroides
+        
+        // MOD: Crear zombis en lugar de asteroides
         Random r = new Random();
 	    for (int i = 0; i < cantAsteroides; i++) {
 	        Ball2 bb = new Ball2(r.nextInt((int)Gdx.graphics.getWidth()),
 	  	            50+r.nextInt((int)Gdx.graphics.getHeight()-50),
 	  	            20+r.nextInt(10), velXAsteroides+r.nextInt(4), velYAsteroides+r.nextInt(4), 
-	  	            new Texture(Gdx.files.internal("aGreyMedium4.png")));	   
+	  	            new Texture(Gdx.files.internal("zombie.png")), // NEW: Textura de zombi
+	  	            jugador); // NEW: Pasar referencia al jugador para persecución
 	  	    balls1.add(bb);
 	  	    balls2.add(bb);
 	  	}
 	}
     
 	public void dibujaEncabezado() {
-		CharSequence str = "Vidas: "+nave.getVidas()+" Ronda: "+ronda;
+		// MOD: Cambiar texto por temática zombi
+		CharSequence str = "Vidas: "+nave.getVidas()+" Oleada: "+ronda;
 		game.getFont().getData().setScale(2f);		
 		game.getFont().draw(batch, str, 10, 30);
 		game.getFont().draw(batch, "Score:"+this.score, Gdx.graphics.getWidth()-150, 30);
 		game.getFont().draw(batch, "HighScore:"+game.getHighScore(), Gdx.graphics.getWidth()/2-100, 30);
 	}
+	
 	@Override
 	public void render(float delta) {
 		  Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
           batch.begin();
 		  dibujaEncabezado();
 	      if (!nave.estaHerido()) {
-		      // colisiones entre balas y asteroides y su destruccion  
+		      // MOD: Colisiones entre balas y zombis
 	    	  for (int i = 0; i < balas.size(); i++) {
 		            Bullet b = balas.get(i);
 		            b.update();
@@ -98,40 +108,43 @@ public class PantallaJuego implements Screen {
 		              }   	  
 		  	        }
 		                
-		         //   b.draw(batch);
 		            if (b.isDestroyed()) {
 		                balas.remove(b);
-		                i--; //para no saltarse 1 tras eliminar del arraylist
+		                i--;
 		            }
 		      }
-		      //actualizar movimiento de asteroides dentro del area
+		      
+		      // MOD: Actualizar movimiento de zombis (persiguen al jugador)
 		      for (Ball2 ball : balls1) {
 		          ball.update();
 		      }
-		      //colisiones entre asteroides y sus rebotes  
+		      
+		      // MOD: Eliminar colisiones entre zombis (ya no rebotan entre sí)
+		      /* Comentado: los zombis no deben rebotar entre sí
 		      for (int i=0;i<balls1.size();i++) {
 		    	Ball2 ball1 = balls1.get(i);   
 		        for (int j=0;j<balls2.size();j++) {
 		          Ball2 ball2 = balls2.get(j); 
 		          if (i<j) {
 		        	  ball1.checkCollision(ball2);
-		     
 		          }
 		        }
-		      } 
+		      }*/
 	      }
+	      
 	      //dibujar balas
 	     for (Bullet b : balas) {       
 	          b.draw(batch);
 	      }
 	      nave.draw(batch, this);
-	      //dibujar asteroides y manejar colision con nave
+	      
+	      // MOD: Dibujar zombis y manejar colisión con jugador
 	      for (int i = 0; i < balls1.size(); i++) {
 	    	    Ball2 b=balls1.get(i);
 	    	    b.draw(batch);
-		          //perdió vida o game over
+		          // MOD: El jugador pierde vida al ser tocado por zombi
 	              if (nave.checkCollision(b)) {
-		            //asteroide se destruye con el choque             
+		            // El zombi se destruye al tocar al jugador             
 	            	 balls1.remove(i);
 	            	 balls2.remove(i);
 	            	 i--;
@@ -147,15 +160,15 @@ public class PantallaJuego implements Screen {
   			dispose();
   		  }
 	      batch.end();
-	      //nivel completado
+	      
+	      // MOD: Nueva oleada cuando se eliminan todos los zombis
 	      if (balls1.size()==0) {
 			Screen ss = new PantallaJuego(game,ronda+1, nave.getVidas(), score, 
-					velXAsteroides+3, velYAsteroides+3, cantAsteroides+10);
+					velXAsteroides+1, velYAsteroides+1, cantAsteroides+5); // NEW: Aumento más gradual
 			ss.resize(1200, 800);
 			game.setScreen(ss);
 			dispose();
 		  }
-	    	 
 	}
     
     public boolean agregarBala(Bullet bb) {
@@ -164,39 +177,21 @@ public class PantallaJuego implements Screen {
 	
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
 		gameMusic.play();
 	}
 
 	@Override
-	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void resize(int width, int height) {}
 	@Override
-	public void pause() {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void pause() {}
 	@Override
-	public void resume() {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void resume() {}
 	@Override
-	public void hide() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void hide() {}
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
 		this.explosionSound.dispose();
 		this.gameMusic.dispose();
 	}
-   
 }

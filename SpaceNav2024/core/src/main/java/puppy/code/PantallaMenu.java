@@ -27,8 +27,10 @@ public class PantallaMenu implements Screen {
 		game.getBatch().setProjectionMatrix(camera.combined);
 
 		game.getBatch().begin();
-		game.getFont().draw(game.getBatch(), "Bienvenido a Space Navigation !", 140, 400);
-		game.getFont().draw(game.getBatch(), "Pincha en cualquier lado o presiona cualquier tecla para comenzar ...", 100, 300);
+		// MOD: Texto cambiado a temática de supervivencia zombi
+		game.getFont().draw(game.getBatch(), "Bienvenido a Zombie Survival!", 140, 400);
+		game.getFont().draw(game.getBatch(), "Pincha o presiona cualquier tecla para comenzar ...", 100, 300);
+		game.getFont().draw(game.getBatch(), "Controles: WASD/Flechas - Movimiento | ESPACIO/CLIC - Disparar", 100, 200);
 	
 		game.getBatch().end();
 
@@ -40,41 +42,16 @@ public class PantallaMenu implements Screen {
 		}
 	}
 	
-	
 	@Override
-	public void show() {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void show() {}
 	@Override
-	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void resize(int width, int height) {}
 	@Override
-	public void pause() {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void pause() {}
 	@Override
-	public void resume() {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void resume() {}
 	@Override
-	public void hide() {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void hide() {}
 	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
-	}
-   
+	public void dispose() {}
 }

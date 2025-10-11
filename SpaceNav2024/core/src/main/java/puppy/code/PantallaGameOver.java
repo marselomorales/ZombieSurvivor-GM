@@ -27,8 +27,9 @@ public class PantallaGameOver implements Screen {
 		game.getBatch().setProjectionMatrix(camera.combined);
 
 		game.getBatch().begin();
-		game.getFont().draw(game.getBatch(), "Game Over !!! ", 120, 400,400,1,true);
-		game.getFont().draw(game.getBatch(), "Pincha en cualquier lado para reiniciar ...", 100, 300);
+		// MOD: Texto cambiado a temática zombi
+		game.getFont().draw(game.getBatch(), "¡Has sido infectado!", 120, 400,400,1,true);
+		game.getFont().draw(game.getBatch(), "Pincha o presiona cualquier tecla para reintentar ...", 100, 300);
 	
 		game.getBatch().end();
 
@@ -40,41 +41,16 @@ public class PantallaGameOver implements Screen {
 		}
 	}
  
-	
 	@Override
-	public void show() {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void show() {}
 	@Override
-	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void resize(int width, int height) {}
 	@Override
-	public void pause() {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void pause() {}
 	@Override
-	public void resume() {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void resume() {}
 	@Override
-	public void hide() {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void hide() {}
 	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
-	}
-   
+	public void dispose() {}
 }

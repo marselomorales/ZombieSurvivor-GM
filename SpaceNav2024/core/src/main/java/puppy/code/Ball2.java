@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 
 public class Ball2 {
@@ -13,9 +14,14 @@ public class Ball2 {
     private int xSpeed;
     private int ySpeed;
     private Sprite spr;
+    
+    // NEW: Referencia al jugador para persecución
+    private Nave4 jugador;
+    private final float VELOCIDAD_PERSECUCION = 1.5f;
 
-    public Ball2(int x, int y, int size, int xSpeed, int ySpeed, Texture tx) {
+    public Ball2(int x, int y, int size, int xSpeed, int ySpeed, Texture tx, Nave4 jugador) { // NEW: Parámetro jugador
     	spr = new Sprite(tx);
+    	this.jugador = jugador; // NEW: Guardar referencia al jugador
     	this.x = x; 
  	
         //validar que borde de esfera no quede fuera
@@ -31,38 +37,46 @@ public class Ball2 {
         this.setXSpeed(xSpeed);
         this.setySpeed(ySpeed);
     }
+    
     public void update() {
-        x += getXSpeed();
-        y += getySpeed();
+        // MOD: Comportamiento de persecución al jugador
+        if (jugador != null) {
+            Vector2 direccion = new Vector2(
+                jugador.getXFloat() - x,
+                jugador.getYFloat() - y
+            );
+            
+            // Normalizar la dirección y aplicar velocidad
+            direccion.nor();
+            x += direccion.x * VELOCIDAD_PERSECUCION;
+            y += direccion.y * VELOCIDAD_PERSECUCION;
+        } else {
+            // Comportamiento original como fallback
+            x += getXSpeed();
+            y += getySpeed();
 
-        if (x+getXSpeed() < 0 || x+getXSpeed()+spr.getWidth() > Gdx.graphics.getWidth())
-        	setXSpeed(getXSpeed() * -1);
-        if (y+getySpeed() < 0 || y+getySpeed()+spr.getHeight() > Gdx.graphics.getHeight())
-        	setySpeed(getySpeed() * -1);
+            if (x+getXSpeed() < 0 || x+getXSpeed()+spr.getWidth() > Gdx.graphics.getWidth())
+                setXSpeed(getXSpeed() * -1);
+            if (y+getySpeed() < 0 || y+getySpeed()+spr.getHeight() > Gdx.graphics.getHeight())
+                setySpeed(getySpeed() * -1);
+        }
+        
         spr.setPosition(x, y);
     }
     
     public Rectangle getArea() {
     	return spr.getBoundingRectangle();
     }
+    
     public void draw(SpriteBatch batch) {
     	spr.draw(batch);
     }
     
+    // MOD: Eliminar colisiones entre enemigos (zombis no rebotan)
     public void checkCollision(Ball2 b2) {
-        if(spr.getBoundingRectangle().overlaps(b2.spr.getBoundingRectangle())){
-        	// rebote
-            if (getXSpeed() ==0) setXSpeed(getXSpeed() + b2.getXSpeed()/2);
-            if (b2.getXSpeed() ==0) b2.setXSpeed(b2.getXSpeed() + getXSpeed()/2);
-        	setXSpeed(- getXSpeed());
-            b2.setXSpeed(-b2.getXSpeed());
-            
-            if (getySpeed() ==0) setySpeed(getySpeed() + b2.getySpeed()/2);
-            if (b2.getySpeed() ==0) b2.setySpeed(b2.getySpeed() + getySpeed()/2);
-            setySpeed(- getySpeed());
-            b2.setySpeed(- b2.getySpeed()); 
-        }
+        // Comportamiento eliminado - los zombis no rebotan entre sí
     }
+    
 	public int getXSpeed() {
 		return xSpeed;
 	}
@@ -75,6 +89,4 @@ public class Ball2 {
 	public void setySpeed(int ySpeed) {
 		this.ySpeed = ySpeed;
 	}
-	
-    
 }

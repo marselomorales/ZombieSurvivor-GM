@@ -13,37 +13,35 @@ public class Bullet {
 	private boolean destroyed = false;
 	private Sprite spr;
 	    
-	    public Bullet(float x, float y, int xSpeed, int ySpeed, Texture tx) {
-	    	spr = new Sprite(tx);
-	    	spr.setPosition(x, y);
-	        this.xSpeed = xSpeed;
-	        this.ySpeed = ySpeed;
-	    }
-	    public void update() {
-	        spr.setPosition(spr.getX()+xSpeed, spr.getY()+ySpeed);
-	        if (spr.getX() < 0 || spr.getX()+spr.getWidth() > Gdx.graphics.getWidth()) {
-	            destroyed = true;
-	        }
-	        if (spr.getY() < 0 || spr.getY()+spr.getHeight() > Gdx.graphics.getHeight()) {
-	        	destroyed = true;
-	        }
-	        
-	    }
-	    
-	    public void draw(SpriteBatch batch) {
-	    	spr.draw(batch);
-	    }
-	    
-	    public boolean checkCollision(Ball2 b2) {
-	        if(spr.getBoundingRectangle().overlaps(b2.getArea())){
-	        	// Se destruyen ambos
-	            this.destroyed = true;
-	            return true;
-	
-	        }
-	        return false;
-	    }
-	    
-	    public boolean isDestroyed() {return destroyed;}
-	
+    public Bullet(float x, float y, int xSpeed, int ySpeed, Texture tx) {
+    	spr = new Sprite(tx);
+    	spr.setPosition(x, y);
+        this.xSpeed = xSpeed;
+        this.ySpeed = ySpeed;
+    }
+    
+    public void update() {
+        spr.setPosition(spr.getX()+xSpeed, spr.getY()+ySpeed);
+        if (spr.getX() < 0 || spr.getX()+spr.getWidth() > Gdx.graphics.getWidth()) {
+            destroyed = true;
+        }
+        if (spr.getY() < 0 || spr.getY()+spr.getHeight() > Gdx.graphics.getHeight()) {
+        	destroyed = true;
+        }
+    }
+    
+    public void draw(SpriteBatch batch) {
+    	spr.draw(batch);
+    }
+    
+    public boolean checkCollision(Ball2 b2) {
+        if(spr.getBoundingRectangle().overlaps(b2.getArea())){
+        	// Se destruyen ambos (bala y zombi)
+            this.destroyed = true;
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isDestroyed() {return destroyed;}
 }
