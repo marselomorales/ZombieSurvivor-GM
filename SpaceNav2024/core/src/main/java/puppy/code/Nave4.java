@@ -69,7 +69,7 @@ public class Nave4 extends EntidadJuego implements Daniable {
 			}
 		}
 
-		if (!invulnerable) {
+		{
 			// MOD: Movimiento continuo mejorado con aceleración suave
 			float aceleracion = 0.2f;
 			float friccion = 0.85f; // Reducida para menos "flotante"
