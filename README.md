@@ -63,11 +63,11 @@ desktop/src/puppy/code/DesktopLauncher.java
 ---
 ### 🔸 Estructura del proyecto
 ZombieSurvivor-GM/
-├── core/ → Lógica principal del juego
-├── desktop/ → Lanzador del juego en PC
-├── android/ → (opcional) versión móvil
-├── assets/ → Recursos: sprites, sonidos, fuentes
-└── build.gradle → Archivo de configuración (si usa Gradle)
+├── core/ → Lógica principal del juego/
+├── desktop/ → Lanzador del juego en PC/
+├── android/ → (opcional) versión móvil/
+├── assets/ → Recursos: sprites, sonidos, fuentes/
+└── build.gradle → Archivo de configuración (si usa Gradle)/
 
 💀 *Proyecto realizado por Marcelo Morales, Eliana García y Joaquín Palta*  
 📘 Pontificia Universidad Católica de Valparaíso – Escuela de Ingeniería Informática
