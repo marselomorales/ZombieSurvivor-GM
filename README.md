@@ -55,25 +55,6 @@ Cuenta con cámara ortográfica, disparo orientado, IA de persecución, colision
 
 ---
 
-### 🔸 Instalación
-
-1. **Descargar el proyecto desde GitHub:**  
-   Ve al repositorio 👉 [ZombieSurvivor-GM](https://github.com/marselomorales/ZombieSurvivor-GM)  
-   y haz clic en **Code → Download ZIP**.
-
-2. **Extraer el archivo ZIP** en tu computadora.
-
-3. Dentro de la carpeta extraída, busca y **entra en la carpeta `SpaceNav2024`**.
-
-4. **Abrir el proyecto en Eclipse:**
-   - En Eclipse, selecciona **File → Import → Gradle → Existing Gradle Project**
-   - Busca la carpeta `SpaceNav2024`
-   - Haz clic en **Finish**
-
-5. Espera a que Eclipse sincronice el proyecto y descargue las dependencias.
-
----
-
 ### 🚀 Pasos para importar y ejecutar el proyecto
 
 1. Descargar el proyecto desde GitHub:  
