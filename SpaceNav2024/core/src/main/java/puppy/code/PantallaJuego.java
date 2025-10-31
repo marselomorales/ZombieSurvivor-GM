@@ -132,7 +132,7 @@ public class PantallaJuego implements Screen {
 		
 		Texture txNave = new Texture(Gdx.files.internal("survivor.png"));
 		Texture txBala = new Texture(Gdx.files.internal("bullet.png"));
-		Sound sonidoChoque = Gdx.audio.newSound(Gdx.files.internal("zombie-death.ogg"));
+		Sound sonidoChoque = Gdx.audio.newSound(Gdx.files.internal("player-hurt.ogg"));
 		Sound sonidoBala = Gdx.audio.newSound(Gdx.files.internal("gun-shot.ogg"));
 		
 		// Cast a int para mantener compatibilidad con constructor de Nave4
