@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class MiniJefe extends Enemigo {
     private Sprite spr;
-    private static final int SALUD_BASE = 300;
+    private static final int SALUD_BASE = 150;
     private static final int DANIO_BASE = 3;
     
     public MiniJefe(float x, float y, Texture textura, Nave4 jugador) {
