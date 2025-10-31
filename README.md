@@ -77,29 +77,29 @@ Cuenta con cámara ortográfica, disparo orientado, IA de persecución, colision
 ### 🚀 Pasos para importar y ejecutar el proyecto
 
 1. Descargar el proyecto desde GitHub:  
-   👉 [ZombieSurvivor-GM](https://github.com/) *(añadir enlace del repositorio)*  
+   👉 [ZombieSurvivor-GM](https://github.com/marselomorales/ZombieSurvivor-GM)
    y hacer clic en **Code → Download ZIP**.
 
-2. Descomprimir el archivo ZIP.  
+3. Descomprimir el archivo ZIP.  
    La carpeta principal debe llamarse **SpaceNav2024**.
 
-3. Abrir **Eclipse**.  
+4. Abrir **Eclipse**.  
    Ir a:  
    `File → Import → Gradle → Existing Gradle Project`
 
-4. Seleccionar la carpeta **SpaceNav2024** y hacer clic en **Finish**.  
+5. Seleccionar la carpeta **SpaceNav2024** y hacer clic en **Finish**.  
    Eclipse detectará automáticamente los submódulos `core` y `desktop`.
 
-5. Esperar a que **Gradle descargue las dependencias** (puede tardar la primera vez).
+6. Esperar a que **Gradle descargue las dependencias** (puede tardar la primera vez).
 
-6. Verificar que el árbol de paquetes incluya:
+7. Verificar que el árbol de paquetes incluya:
    core/src/...
 desktop/src/...
 
-7. En el panel **Package Explorer**, abrir:  
+8. En el panel **Package Explorer**, abrir:  
 `desktop/src/puppy/code/DesktopLauncher.java`
 
-8. Hacer clic derecho → **Run As → Java Application**  
+9. Hacer clic derecho → **Run As → Java Application**  
 (o presionar el botón verde ▶ en la barra superior).
 
 💡 *El juego se abrirá en una ventana de 1200×800 px (ajustable).*  
