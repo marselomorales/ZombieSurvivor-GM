@@ -25,6 +25,9 @@ import puppy.code.enemigos.Ball2;
 import puppy.code.enemigos.MiniJefe;
 import puppy.code.escenarios.EscenarioFactory;
 import puppy.code.escenarios.GestorEscenarios;
+// NUEVO CAMBIO: Importar las factories de escenarios
+import puppy.code.escenarios.EscenarioBosqueFactory;
+import puppy.code.escenarios.EscenarioCiudadFactory;
 import puppy.code.gestores.GestorAssets;
 import puppy.code.gestores.GestorEntidades;
 import puppy.code.gestores.GestorSpawn;
@@ -159,18 +162,31 @@ public class PantallaJuego implements Screen {
         // Gestor de entidades (enemigos y balas)
         gestorEntidades = new GestorEntidades(nave);
         
-        // Gestor de spawn de enemigos
+        // NUEVO CAMBIO CORREGIDO: Lógica de escenarios según ronda
+        if (ronda <= 2) {
+            // Rondas 1-2: Escenario Bosque
+            escenarioFactory = new EscenarioBosqueFactory();
+        } else if (ronda <= 4) {
+            // Rondas 3-4: Escenario Ciudad
+            escenarioFactory = new EscenarioCiudadFactory();
+        } else if (ronda == 5) {
+            // Ronda 5: Boss Final - iniciar inmediatamente
+            escenarioFactory = new EscenarioBosqueFactory(); // Fallback temporal
+            iniciarBossFinal();
+            return; // No inicializar spawn para el boss final
+        } else {
+            // Cualquier ronda superior (por si acaso)
+            escenarioFactory = new EscenarioBosqueFactory();
+        }
+        
+        // Gestor de spawn de enemigos (solo para rondas 1-4)
         gestorSpawn = new GestorSpawn(this, gestorEntidades);
         gestorSpawn.iniciarNuevaOleada(ronda);
         
         // Gestor de interfaz de usuario
         gestorUI = new GestorUI(game, nave, gestorSpawn);
         
-        // INICIALIZAR ABSTRACT FACTORY
-        gestorEscenarios = new GestorEscenarios();
-        escenarioFactory = gestorEscenarios.getFactoryParaRonda(ronda);
-        
-        // Aplicar el escenario actual
+        // Aplicar el escenario actual (solo para rondas 1-4)
         aplicarEscenarioActual();
         
         estadoActual = EstadosJuego.JUGANDO_ENEMIGOS;
@@ -180,6 +196,11 @@ public class PantallaJuego implements Screen {
      * Aplica el escenario actual cambiando fondo, música, etc.
      */
     private void aplicarEscenarioActual() {
+        // NUEVO CAMBIO CORREGIDO: No aplicar escenario normal si es ronda 5 (Boss Final)
+        if (ronda == 5) {
+            return; // El Boss Final tiene su propio fondo especial
+        }
+        
         // Cambiar fondo según la factory
         Texture fondo = escenarioFactory.crearFondo();
         spriteFondo = new Sprite(fondo);
@@ -310,7 +331,7 @@ public class PantallaJuego implements Screen {
             Iterator<Bullet> iteradorBalas = gestorEntidades.getBalas().iterator();
             while (iteradorBalas.hasNext()) {
                 Bullet bala = iteradorBalas.next();
-                // NUEVO CAMBIO: Verificar que la bala no esté destruida y que colisione con el mini jefe
+                // Verificar que la bala no esté destruida y que colisione con el mini jefe
                 if (!bala.isDestroyed() && bala.getArea().overlaps(miniJefe.getArea())) {
                     miniJefe.recibirDanio(1);
                     bala.destruir(); // Destruir la bala después del impacto
@@ -397,6 +418,11 @@ public class PantallaJuego implements Screen {
                 zombiesBossFinal.add(zombie);
                 gestorEntidades.agregarEnemigo((Ball2) zombie);
             });
+            
+            // NUEVO CAMBIO: Configurar callback para proyectiles del BossProfe
+            ((BossProfe) bossFinal).setOnDisparoCallback(proyectil -> {
+                proyectilesEnemigos.add(proyectil);
+            });
         }
         
         // Cambiar a fondo especial del IBC
@@ -418,8 +444,23 @@ public class PantallaJuego implements Screen {
     private void renderBossFinal(float delta) {
         actualizarRotacionNave();
         
-        // Actualizar sistemas base
+        // NUEVO CAMBIO: Permitir que el gestor de entidades actualice zombies normales también
         gestorEntidades.actualizar(delta);
+        
+        // Actualizar proyectiles enemigos (los que dispara el BossProfe)
+        Iterator<ProyectilMiniJefe> iterProyectilesEnemigos = proyectilesEnemigos.iterator();
+        while (iterProyectilesEnemigos.hasNext()) {
+            ProyectilMiniJefe proyectil = iterProyectilesEnemigos.next();
+            proyectil.actualizar(delta);
+            
+            // Verificar colisión con jugador
+            if (!nave.estaInvulnerable() && proyectil.verificarColision(nave)) {
+                nave.recibirDanio(proyectil.getDanio());
+                iterProyectilesEnemigos.remove();
+            } else if (proyectil.estaDestruido()) {
+                iterProyectilesEnemigos.remove();
+            }
+        }
         
         // Actualizar boss final
         if (bossFinal != null) {
@@ -463,6 +504,13 @@ public class PantallaJuego implements Screen {
             }
         }
         
+        // Dibujar proyectiles enemigos (los que dispara el BossProfe)
+        for (ProyectilMiniJefe proyectil : proyectilesEnemigos) {
+            if (!proyectil.estaDestruido()) {
+                proyectil.dibujar(batch);
+            }
+        }
+        
         // Dibujar todo
         gestorEntidades.dibujar(batch);
         nave.draw(batch, this);
@@ -490,16 +538,16 @@ public class PantallaJuego implements Screen {
             gestorEntidades.getCantidadEnemigos() == 0) {
             
             // Crear mini jefe con proyectiles del escenario actual
-            // Usar el boss correcto según el escenario actual con tipo específico
             Texture texturaMiniJefe;
             String tipoBoss;
 
+            // Determinar tipo de minijefe según el escenario actual
             if (ronda <= 2) {
-                // Para rondas 1-2: usar boss bosque
+                // Rondas 1-2: Minijefe Bosque
                 texturaMiniJefe = GestorAssets.get().getTextura("boss-bosque");
                 tipoBoss = "BOSQUE";
             } else {
-                // Para rondas 3+: usar boss ciudad  
+                // Rondas 3-4: Minijefe Ciudad  
                 texturaMiniJefe = GestorAssets.get().getTextura("boss-ciudad");
                 tipoBoss = "CIUDAD";
             }
@@ -534,15 +582,34 @@ public class PantallaJuego implements Screen {
 
         // Transición a siguiente ronda
         if (estadoActual == EstadosJuego.TRANSICION_RONDA && tiempoTransicion <= 0) {
+            // NUEVO CAMBIO CORREGIDO: Lógica de progresión según ronda actual
             if (ronda == 4) {
-                // INICIAR BOSS FINAL
+                // Después de derrotar al minijefe Ciudad en ronda 4, ir DIRECTAMENTE al Boss Final
+                System.out.println("¡Transición al BOSS FINAL!");
                 iniciarBossFinal();
+            } else if (ronda == 5) {
+                // Esto no debería ocurrir normalmente, pero por seguridad
+                mostrarPantallaVictoria();
             } else {
-                // Rondas normales 
+                // Rondas normales 1-3: Pasar a la siguiente ronda con cambio de escenario
+                EscenarioFactory nuevoEscenario;
+                
+                // NUEVO CAMBIO CORREGIDO: Determinar el próximo escenario correctamente
+                if (ronda + 1 <= 2) {
+                    // Rondas 1-2: Bosque
+                    nuevoEscenario = new EscenarioBosqueFactory();
+                } else {
+                    // Rondas 3-4: Ciudad
+                    nuevoEscenario = new EscenarioCiudadFactory();
+                }
+                
                 Screen siguientePantalla = new PantallaJuego(
                     game, ronda + 1, nave.getVidas(), Puntaje.get().getScore(),
                     velXAsteroides + 1, velYAsteroides + 1, cantAsteroides + 2
                 );
+                
+                // Forzar el cambio de escenario en la siguiente pantalla
+                ((PantallaJuego) siguientePantalla).establecerEscenarioFactory(nuevoEscenario);
                 siguientePantalla.resize(1200, 800);
                 game.setScreen(siguientePantalla);
                 dispose();
@@ -583,6 +650,12 @@ public class PantallaJuego implements Screen {
     // Getter para la factory (necesario para GestorSpawn)
     public EscenarioFactory getEscenarioFactory() {
         return escenarioFactory;
+    }
+
+    // NUEVO CAMBIO: Método para forzar un escenario específico
+    public void establecerEscenarioFactory(EscenarioFactory factory) {
+        this.escenarioFactory = factory;
+        aplicarEscenarioActual();
     }
 
     // ==================================================
