@@ -15,6 +15,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import puppy.code.PantallaGameOver;
 import puppy.code.PantallaMenu;
+// NUEVO CAMBIO: Importar la nueva pantalla de victoria
+import puppy.code.PantallaVictoria;
 import puppy.code.Puntaje;
 import puppy.code.ataques.Bullet;
 import puppy.code.ataques.ProyectilMiniJefe;
@@ -477,6 +479,7 @@ public class PantallaJuego implements Screen {
                     
                     if (!bossFinal.estaVivo()) {
                         Puntaje.get().sumar(500); // Gran recompensa
+                        // NUEVO CAMBIO: Reemplazado por la nueva pantalla de victoria
                         mostrarPantallaVictoria();
                         return;
                     }
@@ -516,15 +519,11 @@ public class PantallaJuego implements Screen {
         nave.draw(batch, this);
     }
     
+    // NUEVO CAMBIO: Método para mostrar la pantalla de victoria
     private void mostrarPantallaVictoria() {
-        // Crear pantalla de victoria (necesitarás crearla)
-        // Por ahora, volvemos al menú con mensaje de victoria
-        System.out.println("¡VICTORIA! Has derrotado al Boss Final");
-        
-        // Podrías crear una PantallaVictoria similar a PantallaGameOver
-        Screen pantallaMenu = new PantallaMenu(game);
-        pantallaMenu.resize(1200, 800);
-        game.setScreen(pantallaMenu);
+        Screen pantallaVictoria = new PantallaVictoria(game);
+        pantallaVictoria.resize(1200, 800);
+        game.setScreen(pantallaVictoria);
         dispose();
     }
 
