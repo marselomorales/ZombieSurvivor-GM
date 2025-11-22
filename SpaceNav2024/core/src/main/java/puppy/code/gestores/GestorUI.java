@@ -59,7 +59,10 @@ public class GestorUI {
      * Dibuja la barra de vida del boss como elemento UI separado
      */
     private void dibujarBarraVidaBoss(SpriteBatch batch) {
-        if (bossActual != null && bossActual.estaVivo() && estadoActual == EstadosJuego.MINIJEFE) {
+        // NUEVO CAMBIO: Mostrar barra tanto para MINIJEFE como para BOSS_FINAL
+        if (bossActual != null && bossActual.estaVivo() && 
+            (estadoActual == EstadosJuego.MINIJEFE || estadoActual == EstadosJuego.BOSS_FINAL)) {
+            
             // Configuración de la barra - coordenadas fijas de pantalla
             float barraAncho = 400f;
             float barraAlto = 25f;
@@ -99,8 +102,14 @@ public class GestorUI {
             
             // Texto de vida
             juego.getFont().getData().setScale(1.3f);
-            String textoVida = "BOSS: " + saludActual + " / " + saludMaxima;
-            float textoWidth = 150f; // Ancho aproximado
+            // NUEVO CAMBIO: Texto diferente para el boss final
+            String textoVida;
+            if (estadoActual == EstadosJuego.BOSS_FINAL) {
+                textoVida = "BOSS FINAL: " + saludActual + " / " + saludMaxima;
+            } else {
+                textoVida = "BOSS: " + saludActual + " / " + saludMaxima;
+            }
+            float textoWidth = 200f; // Ancho aumentado para el texto más largo
             juego.getFont().draw(batch, textoVida, barraX + (barraAncho - textoWidth) / 2f, barraY + barraAlto + 20f);
             
             // Restaurar escala de fuente para otros textos
@@ -137,6 +146,10 @@ public class GestorUI {
         } else if (estadoActual == EstadosJuego.TRANSICION_RONDA) {
             juego.getFont().draw(batch, "¡Oleada " + ronda + " completada!",
                     PantallaJuego.WORLD_WIDTH / 2f - 120, 90);
+        } else if (estadoActual == EstadosJuego.BOSS_FINAL) {
+            // NUEVO CAMBIO: Mostrar texto especial para el boss final
+            juego.getFont().draw(batch, "¡BOSS FINAL!",
+                    PantallaJuego.WORLD_WIDTH / 2f - 70, 90);
         }
 
         // Nombre del escenario
