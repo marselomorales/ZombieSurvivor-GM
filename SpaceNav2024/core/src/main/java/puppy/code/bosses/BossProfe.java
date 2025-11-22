@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * BOSS FINAL - El temido Profe
+ * BOSS FINAL - BOSS PROFE
  * Combina habilidades de todos los jefes + invocación de zombies + ataques de proyectiles
  */
 public class BossProfe extends BossBase {
@@ -370,6 +370,4 @@ public class BossProfe extends BossBase {
     public int getSaludMaxima() {
         return SALUD_BASE;
     }
-
-    // Archivo actualizado.
 }
