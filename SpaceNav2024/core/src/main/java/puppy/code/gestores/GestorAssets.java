@@ -41,6 +41,9 @@ public class GestorAssets implements Disposable {
         cargarTextura("fondo-gameover", "fondo-gameover.jpg");
         cargarTextura("fondo-instrucciones", "fondo-instrucciones.jpg");
         
+        // NUEVO CAMBIO: Añadir fondo de victoria
+        cargarTextura("fondo-victoria", "fondo-victoria.png");
+        
         // Fondos temáticos para escenarios
         cargarTextura("fondo-bosque", "fondo-bosque.jpg");
         cargarTextura("fondo-ciudad", "fondo-ciudad.jpg");
