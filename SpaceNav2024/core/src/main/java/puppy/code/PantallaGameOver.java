@@ -48,11 +48,14 @@ public class PantallaGameOver implements Screen {
 		
 		// Textos de game over
 		game.getFont().draw(game.getBatch(), "¡Has sido infectado!", 120, 400,400,1,true);
-		game.getFont().draw(game.getBatch(), "Pincha o presiona cualquier tecla para reintentar ...", 100, 300);
+		// NUEVO CAMBIO: Texto actualizado para reflejar solo ENTER
+		game.getFont().draw(game.getBatch(), "Presiona ENTER para reintentar", 100, 300);
 	
 		game.getBatch().end();
 
-		if (Gdx.input.isTouched() || Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
+		// NUEVO CAMBIO: Solo responde a ENTER específicamente
+		// Se eliminó Input.Keys.ANY_KEY e isTouched para evitar saltos accidentales
+		if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
 			Screen ss = new PantallaJuego(game,1,3,0,1,1,10);
 			ss.resize(1200, 800);
 			game.setScreen(ss);
