@@ -359,7 +359,6 @@ public class BossProfe extends BossBase {
     @Override
     public void escalarPorRonda(int ronda) {
         // El boss final no escala por rondas, ya es el más fuerte
-        // Pero podemos ajustar un poco si queremos
         float factor = 1.0f + (ronda - 5) * 0.1f; // Ajustar para ronda 5
         
         salud = (int)(SALUD_BASE * factor);
@@ -371,4 +370,6 @@ public class BossProfe extends BossBase {
     public int getSaludMaxima() {
         return SALUD_BASE;
     }
+
+    // Archivo actualizado.
 }
