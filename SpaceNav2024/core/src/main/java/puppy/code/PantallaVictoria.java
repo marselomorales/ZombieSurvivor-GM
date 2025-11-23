@@ -49,17 +49,9 @@ public class PantallaVictoria implements Screen {
         
         // Textos de victoria
         game.getFont().draw(game.getBatch(), "¡HAS DERROTADO AL BOSS FINAL!", 120, 400,400,1,true);
-        game.getFont().draw(game.getBatch(), "Presiona ENTER para seguir jugando", 100, 300);
         game.getFont().draw(game.getBatch(), "Presiona ESC para volver al menú principal", 100, 250);
     
         game.getBatch().end();
-
-        // NUEVO CAMBIO: Opciones de la pantalla de victoria
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            // Continuar jugando - simplemente volvemos al juego actual
-            // No hacemos nada, ya que el juego debe continuar normalmente
-            dispose();
-        }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             // Volver al menú principal
